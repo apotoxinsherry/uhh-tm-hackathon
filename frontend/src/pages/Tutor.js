@@ -37,7 +37,7 @@ function Tutor() {
         setMessages([
           {
             type: "bot",
-            content: "Hello! I'm your AI tutor. Ask me any questions you have.",
+            content: "Welcome to NoteGuru, your personal learning assistant! I’m here to help you turn your notes into a comprehensive understanding of the concepts you’ve studied. Whether it’s a complex theory, a technical term, or an entire section of your notes, I’ll break it down for you in simple terms. You can ask me questions anytime, and I’ll guide you through the details with explanations, examples, and connections to other related topics. Let’s turn those notes into powerful knowledge and mastery together! Feel free to ask anything, and let’s get started!",
             timestamp: new Date().toISOString()
           }
         ]);
@@ -130,7 +130,7 @@ function Tutor() {
       const welcomeMessage = [
         {
           type: "bot",
-          content: "Chat history cleared. How can I help you today?",
+          content: "Welcome to NoteGuru, your personal learning assistant! I’m here to help you turn your notes into a comprehensive understanding of the concepts you’ve studied. Whether it’s a complex theory, a technical term, or an entire section of your notes, I’ll break it down for you in simple terms. You can ask me questions anytime, and I’ll guide you through the details with explanations, examples, and connections to other related topics. Let’s turn those notes into powerful knowledge and mastery together! Feel free to ask anything, and let’s get started!",
           timestamp: new Date().toISOString()
         }
       ];
@@ -142,7 +142,7 @@ function Tutor() {
   return (
     <div className="tutor-container">
       <div className="tutor-header">
-        <h1>AI Tutor</h1>
+        <h1>NoteMentor</h1>
         <div className="tutor-actions">
           <button className="clear-button" onClick={clearChat}>
             Clear Chat
