@@ -115,7 +115,7 @@ async def merm_route(username: str, filename: str,subtopic:str):
     # LangChain message-style prompt
     messages = [
         SystemMessage(content="You are a helpful assistant which helps generate only suitable mermaid diagram for notes based on the tags, keywords and instructions as provided by the user only for the data provided."),
-        HumanMessage(content=f"Notes:\n{context}\n\nNow, based on these notes generate mermaid syntax to make understanding easier with appropriate mermaid diagrams")
+        HumanMessage(content=f"Notes:\n{context}\n\nNow, based on these notes generate mermaid syntax of only key important meaningfull diagrams (not more than 2) to make understanding easier with appropriate mermaid diagrams")
     ]
 
     try:
