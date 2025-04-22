@@ -168,39 +168,24 @@ async def merm_route(username: str, filename: str,subtopic:str):
 
     # LangChain LLM instance
     llm = ChatOpenAI(model_name="gpt-4o-mini")
+    # Open and read a file
+    fp = 'backend/prompts/merm.txt'  # Change this to your file name
+
+    try:
+        with open(fp, 'r') as file:
+            content = file.read()
+            print("File content read")
+    except FileNotFoundError:
+        print(f"Error: File '{fp}' not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
     # LangChain message-style prompt
     messages = [
         SystemMessage(content="You are a helpful assistant which helps generate only suitable mermaid diagram for notes based on the tags, keywords and instructions as provided by the user only for the data provided."),
-        HumanMessage(content=f"""Notes:\n{context}\n\nNow, based on these notes generate mermaid syntax of only key important meaningfull diagrams (not more than 2) to make understanding easier with appropriate mermaid diagrams example: ---
-title: Animal example
----
-classDiagram
-    note "From Duck till Zebra"
-    Animal <|-- Duck
-    note for Duck "can fly\ncan swim\ncan dive\ncan help in debugging"
-    Animal <|-- Fish
-    Animal <|-- Zebra
-    Animal : +int age
-    Animal : +String gender
-    Animal: +isMammal()
-    Animal: +mate()
-    class Duck
-        +String beakColor
-        +swim()
-        +quack()
-    
-    class Fish
-        -int sizeInFeet
-        -canEat()
-    
-    class Zebra
-        +bool is_wild
-        +run()
-        
-    each diagram not more than the above size diagram
-""")
+        HumanMessage(content=f"""Notes:\n{context}\n\n {content}""")
     ]
+    
 
     try:
         answer = llm(messages).content
