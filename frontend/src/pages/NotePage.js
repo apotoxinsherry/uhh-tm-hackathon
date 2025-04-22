@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
@@ -18,6 +18,9 @@ function NotePage() {
     isEditing: false, // Control whether response is in edit mode
     editedResponse: "" // Store edited response text
   }]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState("");
+  const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
   // Load saved data when the component mounts
@@ -185,6 +188,44 @@ function NotePage() {
     alert("Edits saved successfully!");
   };
 
+  // Handle file upload
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    setIsUploading(true);
+    setUploadStatus("Uploading...");
+    
+    try {
+      const response = await axios.post(
+        `http://localhost:8000/users/user1/notes/note1/upload`, 
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      );
+      
+      setUploadStatus(`Success! File "${file.name}" uploaded.`);
+      setTimeout(() => {
+        setUploadStatus("");
+      }, 5000);
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setUploadStatus("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+      // Clear the file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    }
+  };
+
   return (
     <div className="note-page">
       <div className="note-header">
@@ -206,6 +247,24 @@ function NotePage() {
             <span className="button-icon">💾</span>
             Save All
           </button>
+          <div className="file-upload-container">
+            <input
+              type="file"
+              id="file-upload"
+              onChange={handleFileUpload}
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+            />
+            <button 
+              className="upload-button" 
+              onClick={() => fileInputRef.current.click()}
+              disabled={isUploading}
+            >
+              <span className="button-icon">📎</span>
+              Upload File
+            </button>
+            {uploadStatus && <div className="upload-status">{uploadStatus}</div>}
+          </div>
         </div>
       </div>
 
