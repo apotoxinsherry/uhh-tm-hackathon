@@ -95,6 +95,7 @@ async def ask_question_with_context(
     note_name: str = Path(...),
     body: QuestionRequest = Body(...)
 ):
+    
     query = body.query
     context_level = body.contextLevel
     include_diagram = body.includeDiagram
