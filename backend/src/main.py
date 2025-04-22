@@ -98,3 +98,32 @@ async def tutor_route(username: str, filename: str):
 @app.get("/users/{username}/notes/{filename}/pux")
 async def pux_route(username: str, filename: str):
     return {}
+
+@app.get("/users/{username}/notes/{filename}/{subtopic}")
+async def merm_route(username: str, filename: str,subtopic:str):
+   
+    subtopic = subtopic + ".md"
+    file_path = BASE_DIR / username / filename / subtopic
+    if not file_path.exists():
+        raise HTTPException(status_code=404, detail="File not found")
+
+    context = file_path.read_text()
+
+    # LangChain LLM instance
+    llm = ChatOpenAI(model_name="gpt-4o-mini")
+
+    # LangChain message-style prompt
+    messages = [
+        SystemMessage(content="You are a helpful assistant which helps generate only suitable mermaid diagram for notes based on the tags, keywords and instructions as provided by the user only for the data provided."),
+        HumanMessage(content=f"Notes:\n{context}\n\nNow, based on these notes generate mermaid syntax to make understanding easier with appropriate mermaid diagrams")
+    ]
+
+    try:
+        answer = llm(messages).content
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"LangChain Error: {e}")
+
+    # Append query and answer to markdown file
+    with file_path.open("a") as f:
+        f.write(f"\n\n**Merm:** {answer}\n")
+    return {"mermaid":answer}
