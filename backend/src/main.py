@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Path, Body, logger
+from fastapi import FastAPI, HTTPException, Path, Body, logger, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path as PathlibPath
 from langchain.chat_models import ChatOpenAI
@@ -115,8 +115,8 @@ async def ask_question_with_context(
         
         # LangChain message-style prompt
         messages = [
-            SystemMessage(content="You are a helpful assistant which helps generate notes based on the tags, keywords, and instructions as provided by the user."),
-            HumanMessage(content=f"Notes:\n{context}\n\nNow, based on these notes, generate further notes for the following query. If needed, refer to the context. The query is as follows.:\n{query}")
+            SystemMessage(content="You are a helpful assistant which helps generate notes based on the tags, keywords, and instructions as provided by the user. If the user's rating is low, explain the topic to them in a manner which can be easily understood even by a child. Include vivid examples and explanations. If the rating is higher, provide detailed, in-depth information on the topic requested by the user. Delve into the nitty-gritty details on the topic requested by the user."),
+            HumanMessage(content=f"Notes:\n{context}\n\nNow, based on these notes, generate further notes for the following query. If needed, refer to the context. Out of 5, I'd rate myself {context_level}/5 on the topic I'm about to ask you. The query is as follows.:\n{query}")
         ]
 
         answer = llm(messages).content
@@ -204,3 +204,18 @@ async def merm_route(username: str, filename: str,subtopic:str):
     with file_path.open("a") as f:
         f.write(f"\n\n**Merm:** {answer}\n")
     return {"mermaid":answer}
+
+
+@app.post("/users/{username}/notes/{note_name}/upload")
+async def upload_route(username: str, note_name: str, file: UploadFile = File(...)):
+    # Path: users/username/notes/note_name/uploaded_files
+    upload_path = BASE_DIR / username  / note_name / "uploaded_files"
+    upload_path.mkdir(parents=True, exist_ok=True)
+
+    # Save the uploaded file using the original filename
+    file_path = upload_path / file.filename
+    with open(file_path, "wb") as f:
+        content = await file.read()
+        f.write(content)
+
+    return {"message": f"File '{file.filename}' uploaded successfully to note '{note_name}' for user '{username}'."}
