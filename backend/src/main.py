@@ -156,9 +156,83 @@ async def ask_question_with_context(
         raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}\n{error_details}")
 
 # 4. Subroutes (returning nothing for now)
-@app.get("/users/{username}/notes/{filename}/tutor")
-async def tutor_route(username: str, filename: str):
-    return {}
+@app.post("/users/{username}/notes/{note_name}/tutor")
+async def tutor_route(
+    username: str = Path(...),
+    note_name: str = Path(...),
+    body: QueryModel = Body(...)
+):
+    
+    query = body.query
+
+    
+    note_dir = BASE_DIR / username / note_name
+    chat_dir = BASE_DIR / username / note_name / "chat"
+    upload_dir = BASE_DIR / username / note_name / "uploaded_files"
+    chat_dir.mkdir(parents=True, exist_ok=True)
+
+
+    
+    
+    # Gather content from all markdown files (subsections) in the note folder
+    context = ""
+    for file in note_dir.glob("*.md"):
+        context += f"\n\n{'='*5} {file.name} {'='*5}\n"
+        context += file.read_text()
+
+    # Gather content from the text files present in the uploaded_files subfolder
+    for file in upload_dir.glob("*.txt"):
+        context += f"\n\n{'='*5} {file.name} {'='*5}\n"
+        context += file.read_text()
+    
+    chat_history = ""
+    for file in chat_dir.glob("*.md"):
+        chat_history += f"\n\n{'='*5} {file.name} {'='*5}\n"
+        chat_history += file.read_text()
+    
+
+
+    try:
+        # LangChain LLM instance
+        llm = ChatOpenAI(model_name="gpt-4o-mini")
+        
+        # LangChain message-style prompt
+        messages = [
+            SystemMessage(content="You are a tutoring agent designed to help users learn by explaining the material they provide. Your task is to analyze the user's notes, offer clear and concise explanations, and directly answer any queries the user has based on the content of their notes"),
+            SystemMessage(content=f"The notes taken by the user is as follows: {context}. Similarly, the chat history is as follows: {chat_history}."),
+            HumanMessage(content=f"The query is as follows.:\n{query}")
+        ]
+
+        answer = llm(messages).content
+        
+        # Create a new markdown file for the response
+        import time
+        import re
+        
+        # Create a safe filename from the query
+        safe_query = re.sub(r'[^\w\s-]', '', query)[:30].strip().replace(' ', '-').lower()
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        new_filename = f"{timestamp}-{safe_query}.md"
+        
+        
+        # Create the new subsection file
+        response_file = chat_dir / new_filename
+        with response_file.open("w") as f:
+            f.write(f"Question: {query} \n Answer by the LLM: {answer}")
+        
+        return {
+        "status": "received",
+        "username": username,
+        "note_name": note_name,
+        "answer": answer,
+        "query": query
+    }
+
+        
+    except Exception as e:
+        import traceback
+        error_details = traceback.format_exc()
+        raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}\n{error_details}")
 
 @app.get("/users/{username}/notes/{filename}/pux")
 async def pux_route(username: str, filename: str):
