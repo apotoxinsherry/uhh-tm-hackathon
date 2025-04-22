@@ -9,6 +9,10 @@ from dotenv import load_dotenv
 from pydantic import BaseModel
 import datetime
 
+class QuestionRequest(BaseModel):
+    query: str
+    contextLevel: int  # You can adjust the data type as needed
+    includeDiagram: bool
 
 class QueryModel(BaseModel):
     query: str
@@ -89,8 +93,11 @@ async def update_note_subsections(username: str, note_name: str, subsections: Li
 async def ask_question_with_context(
     username: str = Path(...),
     note_name: str = Path(...),
-    query: str = Body(...),
+    body: QuestionRequest = Body(...)
 ):
+    query = body.query
+    context_level = body.contextLevel
+    include_diagram = body.includeDiagram
     
     note_dir = BASE_DIR / username / note_name
     
