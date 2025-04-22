@@ -115,8 +115,8 @@ async def ask_question_with_context(
         
         # LangChain message-style prompt
         messages = [
-            SystemMessage(content="You are a helpful assistant which helps generate notes based on the tags, keywords, and instructions as provided by the user."),
-            HumanMessage(content=f"Notes:\n{context}\n\nNow, based on these notes, generate further notes for the following query. If needed, refer to the context. The query is as follows.:\n{query}")
+            SystemMessage(content="You are a helpful assistant which helps generate notes based on the tags, keywords, and instructions as provided by the user. If the user's rating is low, explain the topic to them in a manner which can be easily understood even by a child. Include vivid examples and explanations. If the rating is higher, provide detailed, in-depth information on the topic requested by the user. Delve into the nitty-gritty details on the topic requested by the user."),
+            HumanMessage(content=f"Notes:\n{context}\n\nNow, based on these notes, generate further notes for the following query. If needed, refer to the context. Out of 5, I'd rate myself {context_level}/5 on the topic I'm about to ask you. The query is as follows.:\n{query}")
         ]
 
         answer = llm(messages).content
