@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException, Path, Body, logger
+from fastapi import FastAPI, HTTPException, Path, Body, logger, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from pathlib import Path as PathlibPath
 from langchain.chat_models import ChatOpenAI
@@ -204,3 +204,18 @@ async def merm_route(username: str, filename: str,subtopic:str):
     with file_path.open("a") as f:
         f.write(f"\n\n**Merm:** {answer}\n")
     return {"mermaid":answer}
+
+
+@app.post("/users/{username}/notes/{note_name}/upload")
+async def upload_route(username: str, note_name: str, file: UploadFile = File(...)):
+    # Path: users/username/notes/note_name/uploaded_files
+    upload_path = BASE_DIR / username  / note_name / "uploaded_files"
+    upload_path.mkdir(parents=True, exist_ok=True)
+
+    # Save the uploaded file using the original filename
+    file_path = upload_path / file.filename
+    with open(file_path, "wb") as f:
+        content = await file.read()
+        f.write(content)
+
+    return {"message": f"File '{file.filename}' uploaded successfully to note '{note_name}' for user '{username}'."}
