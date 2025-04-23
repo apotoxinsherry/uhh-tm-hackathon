@@ -123,7 +123,7 @@ async def ask_question_with_context(
                 "\n\nAdditionally, you MUST include a Mermaid diagram to visualize the concept. "
                 "The diagram should be enclosed in mermaid code blocks like: ```mermaid\n[diagram code]\n```\n"
                 "Use appropriate diagram type (flowchart, sequence diagram, class diagram, etc.) based on the query context. "
-                "Keep the diagram clear, focused on the main concepts, and properly formatted according to Mermaid syntax."
+                "Keep the diagram clear, focused on the main concepts, and properly formatted according to Mermaid syntax. Return only a single mermaid diagram. NOT MORE THAN 1."
             )
         
         # LangChain message-style prompt
