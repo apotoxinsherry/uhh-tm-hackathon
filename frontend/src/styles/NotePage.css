@@ -975,3 +975,42 @@ textarea:focus {
     transform: rotate(0deg);
   }
 }
+
+/* Add these styles to your NotePage.css file */
+
+.diagram-container {
+  margin-top: 15px;
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.diagram-container h4 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+  font-size: 1.1rem;
+}
+
+.mermaid {
+  margin: 10px 0;
+  overflow: auto;
+  max-width: 100%;
+}
+
+/* Ensure the mermaid diagrams are responsive */
+.mermaid svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 100%;
+  height: auto !important;
+}
+
+/* Styling for mermaid loading state */
+.mermaid-loading {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}

@@ -88,42 +88,57 @@ async def update_note_subsections(username: str, note_name: str, subsections: Li
             f.write(subsection["content"])
     
     return {"status": "success", "message": "Subsections updated"}
-
 @app.post("/users/{username}/notes/{note_name}/ask")
 async def ask_question_with_context(
     username: str = Path(...),
     note_name: str = Path(...),
     body: QuestionRequest = Body(...)
 ):
-    
     query = body.query
     context_level = body.contextLevel
     include_diagram = body.includeDiagram
     
     note_dir = BASE_DIR / username / note_name
     
-    
     # Gather content from all markdown files (subsections) in the note folder
     context = ""
     for file in note_dir.glob("*.md"):
         context += f"\n\n{'='*5} {file.name} {'='*5}\n"
         context += file.read_text()
-
+    
     try:
         # LangChain LLM instance
         llm = ChatOpenAI(model_name="gpt-4o-mini")
         
+        # Prepare system prompt based on whether diagram is requested
+        system_prompt = (
+            "You are a helpful assistant which helps generate notes based on the tags, keywords, and instructions as provided by the user. "
+            "If the user's rating is low, explain the topic to them in a manner which can be easily understood even by a child. "
+            "Include vivid examples and explanations. If the rating is higher, provide detailed, in-depth information on the topic requested by the user. "
+            "Delve into the nitty-gritty details on the topic requested by the user."
+        )
+        
+        if include_diagram:
+            system_prompt += (
+                "\n\nAdditionally, you MUST include a Mermaid diagram to visualize the concept. "
+                "The diagram should be enclosed in mermaid code blocks like: ```mermaid\n[diagram code]\n```\n"
+                "Use appropriate diagram type (flowchart, sequence diagram, class diagram, etc.) based on the query context. "
+                "Keep the diagram clear, focused on the main concepts, and properly formatted according to Mermaid syntax."
+            )
+        
         # LangChain message-style prompt
         messages = [
-            SystemMessage(content="You are a helpful assistant which helps generate notes based on the tags, keywords, and instructions as provided by the user. If the user's rating is low, explain the topic to them in a manner which can be easily understood even by a child. Include vivid examples and explanations. If the rating is higher, provide detailed, in-depth information on the topic requested by the user. Delve into the nitty-gritty details on the topic requested by the user."),
+            SystemMessage(content=system_prompt),
             HumanMessage(content=f"Notes:\n{context}\n\nNow, based on these notes, generate further notes for the following query. If needed, refer to the context. Out of 5, I'd rate myself {context_level}/5 on the topic I'm about to ask you. The query is as follows.:\n{query}")
         ]
-
-        answer = llm(messages).content
         
+        answer = llm(messages).content
+        print("answer is below")
+        print(answer)
         # Create a new markdown file for the response
         import time
         import re
+        import datetime
         
         # Create a safe filename from the query
         safe_query = re.sub(r'[^\w\s-]', '', query)[:30].strip().replace(' ', '-').lower()
@@ -135,27 +150,30 @@ async def ask_question_with_context(
         with response_file.open("w") as f:
             f.write(f"# Response to: {query}\n\n{answer}")
         
-        # Create the new subsection file
-        response_file = note_dir / new_filename
-        with response_file.open("w") as f:
-            f.write(f"{answer}")
-        
-        return {
-        "status": "received",
-        "username": username,
-        "note_name": note_name,
-        "context": context,
-        "answer": answer,
-        "query": query
-    }
+        # Process the diagram if included
+        mermaid_diagram = None
+        if include_diagram:
+            # Extract Mermaid diagram from the response if it exists
+            mermaid_match = re.search(r'```mermaid\n(.*?)\n```', answer, re.DOTALL)
+            if mermaid_match:
+                mermaid_diagram = mermaid_match.group(1)
+        print("hiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii")
 
-        
+        print(mermaid_diagram)
+        return {
+            "status": "received",
+            "username": username,
+            "note_name": note_name,
+            "context": context,
+            "answer": answer,
+            "query": query,
+            "diagram": mermaid_diagram if include_diagram and mermaid_diagram else None
+        }
+    
     except Exception as e:
         import traceback
         error_details = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}\n{error_details}")
-
-# 4. Subroutes (returning nothing for now)
 @app.post("/users/{username}/notes/{note_name}/tutor")
 async def tutor_route(
     username: str = Path(...),

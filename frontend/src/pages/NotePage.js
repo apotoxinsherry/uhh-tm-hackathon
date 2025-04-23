@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
+// Remove the incorrect import
+import { Mermaid } from "mermaid"; 
 import "../styles/NotePage.css";
 
 function NotePage() {
@@ -12,6 +14,7 @@ function NotePage() {
     topic: "", 
     content: "", 
     response: "",
+    diagram: null, // Add this to store the diagram separately
     contextLevel: 3, // Default context level
     includeDiagram: false, // Default diagram setting
     showExcalidraw: false, // Control Excalidraw visibility for this section
@@ -23,6 +26,41 @@ function NotePage() {
   const [uploadStatus, setUploadStatus] = useState("");
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
+  const diagramRefs = useRef([]);
+
+  // Load Mermaid library dynamically
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js';
+    script.async = true;
+    document.body.appendChild(script);
+    
+    script.onload = () => {
+      window.mermaid.initialize({
+        startOnLoad: true,
+        theme: 'default',
+        securityLevel: 'loose',
+      });
+    };
+    
+    return () => {
+      // Only remove the script if it was added
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
+  }, []);
+
+  // Initialize or update mermaid diagrams after render
+  useEffect(() => {
+    if (window.mermaid) {
+      try {
+        window.mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+      } catch (error) {
+        console.error("Mermaid initialization error:", error);
+      }
+    }
+  }, [inputs]);
 
   // Load saved data when the component mounts
   useEffect(() => {
@@ -138,11 +176,39 @@ function NotePage() {
       
       const updatedInputs = [...inputs];
       const responseText = res.data.answer || "Dummy Response"; // For now
+      
+      // Store the response and diagram separately
       updatedInputs[index].response = responseText;
       updatedInputs[index].editedResponse = responseText; // Initialize edited response
+      
+      // Store diagram if it exists in the response
+      if (res.data.diagram) {
+        updatedInputs[index].diagram = res.data.diagram;
+      } else {
+        // If diagram was requested but not found in the API response,
+        // try to extract it from markdown content
+        if (includeDiagram) {
+          const mermaidMatch = responseText.match(/```mermaid\n([\s\S]*?)\n```/);
+          if (mermaidMatch && mermaidMatch[1]) {
+            updatedInputs[index].diagram = mermaidMatch[1];
+          }
+        }
+      }
+      
       updatedInputs[index].isLoading = false; // Turn off loading state
-      console.log("Response:", res);
+      console.log("Response:", res.data);
       setInputs(updatedInputs);
+      
+      // Re-initialize Mermaid diagrams after setting new content
+      setTimeout(() => {
+        if (window.mermaid) {
+          try {
+            window.mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+          } catch (error) {
+            console.error("Mermaid initialization error:", error);
+          }
+        }
+      }, 100);
       
       // Automatically add a new section after generating a response
       if (index === inputs.length - 1) {
@@ -169,6 +235,7 @@ function NotePage() {
         topic: "", 
         content: "", 
         response: "", 
+        diagram: null, // Add this for new inputs too
         contextLevel: 3, 
         includeDiagram: false,
         showExcalidraw: false,
@@ -210,11 +277,28 @@ function NotePage() {
     newInputs[index].response = newInputs[index].editedResponse;
     newInputs[index].isEditing = false;
     
+    // Update diagram if the edited response contains a new/modified diagram
+    const mermaidMatch = newInputs[index].response.match(/```mermaid\n([\s\S]*?)\n```/);
+    if (mermaidMatch && mermaidMatch[1]) {
+      newInputs[index].diagram = mermaidMatch[1];
+    }
+    
     setInputs(newInputs);
     
     // Also save to storage
     localStorage.setItem(`note-${id}`, JSON.stringify(newInputs));
     alert("Edits saved successfully!");
+    
+    // Re-initialize Mermaid diagrams after editing
+    setTimeout(() => {
+      if (window.mermaid) {
+        try {
+          window.mermaid.init(undefined, document.querySelectorAll('.mermaid'));
+        } catch (error) {
+          console.error("Mermaid initialization error:", error);
+        }
+      }
+    }, 100);
   };
 
   // Handle file upload
@@ -437,6 +521,19 @@ function NotePage() {
               ) : (
                 <div className="markdown-response">
                   <ReactMarkdown>{input.response}</ReactMarkdown>
+                </div>
+              )}
+              
+              {/* Display Mermaid diagram if available */}
+              {input.diagram && !input.isEditing && (
+                <div className="diagram-container">
+                  <h4>Diagram</h4>
+                  <div 
+                    className="mermaid" 
+                    ref={el => diagramRefs.current[index] = el}
+                  >
+                    {input.diagram}
+                  </div>
                 </div>
               )}
               
