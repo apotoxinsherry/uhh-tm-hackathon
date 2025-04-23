@@ -85,12 +85,26 @@ function Home() {
     
     setNotes([...notes, newNote]);
     
-    // Optionally, navigate directly to the new note
+    // Navigate directly to the new note
     navigate(`/note/${newNoteId}`);
   };
 
   const handleNoteClick = (id) => {
     navigate(`/note/${id}`);
+  };
+  
+  const handleDeleteNote = (e, id) => {
+    // Prevent the event from bubbling up to parent elements
+    e.stopPropagation();
+    
+    // Confirm before deleting
+    if (window.confirm("Are you sure you want to delete this note? This action cannot be undone.")) {
+      // Remove from localStorage
+      localStorage.removeItem(`note-${id}`);
+      
+      // Update state
+      setNotes(notes.filter(note => note.id !== id));
+    }
   };
 
   const getRandomColor = () => {
@@ -129,6 +143,13 @@ function Home() {
               className="note-card"
               style={{ backgroundColor: note.color }}
             >
+              <button 
+                className="delete-button"
+                onClick={(e) => handleDeleteNote(e, note.id)}
+                title="Delete Note"
+              >
+                ✕
+              </button>
               <h3 className="note-title">{note.title}</h3>
               <p className="note-preview">{note.preview}</p>
               <div className="note-footer">
