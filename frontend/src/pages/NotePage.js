@@ -16,7 +16,8 @@ function NotePage() {
     includeDiagram: false, // Default diagram setting
     showExcalidraw: false, // Control Excalidraw visibility for this section
     isEditing: false, // Control whether response is in edit mode
-    editedResponse: "" // Store edited response text
+    editedResponse: "", // Store edited response text
+    isLoading: false // Add loading state for each section
   }]);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadStatus, setUploadStatus] = useState("");
@@ -121,6 +122,12 @@ function NotePage() {
   // Handle submit action to fetch response
   const handleSubmit = async (index) => {
     const { tag, topic, content, contextLevel, includeDiagram } = inputs[index];
+    
+    // Set loading state to true for this section
+    const newInputs = [...inputs];
+    newInputs[index].isLoading = true;
+    setInputs(newInputs);
+    
     try {
       // Send contextLevel and includeDiagram to backend
       const res = await axios.post("http://localhost:8000/users/user1/notes/note1/ask", { 
@@ -129,12 +136,13 @@ function NotePage() {
         includeDiagram: includeDiagram
       });
       
-      const newInputs = [...inputs];
+      const updatedInputs = [...inputs];
       const responseText = res.data.answer || "Dummy Response"; // For now
-      newInputs[index].response = responseText;
-      newInputs[index].editedResponse = responseText; // Initialize edited response
+      updatedInputs[index].response = responseText;
+      updatedInputs[index].editedResponse = responseText; // Initialize edited response
+      updatedInputs[index].isLoading = false; // Turn off loading state
       console.log("Response:", res);
-      setInputs(newInputs);
+      setInputs(updatedInputs);
       
       // Automatically add a new section after generating a response
       if (index === inputs.length - 1) {
@@ -143,11 +151,12 @@ function NotePage() {
     } catch (err) {
       console.error("Error:", err);
       // Show error message or fallback response
-      const newInputs = [...inputs];
+      const updatedInputs = [...inputs];
       const errorText = "Failed to generate response. Please try again.";
-      newInputs[index].response = errorText;
-      newInputs[index].editedResponse = errorText;
-      setInputs(newInputs);
+      updatedInputs[index].response = errorText;
+      updatedInputs[index].editedResponse = errorText;
+      updatedInputs[index].isLoading = false; // Turn off loading state even on error
+      setInputs(updatedInputs);
     }
   };
 
@@ -164,7 +173,8 @@ function NotePage() {
         includeDiagram: false,
         showExcalidraw: false,
         isEditing: false,
-        editedResponse: ""
+        editedResponse: "",
+        isLoading: false
       }
     ]);
   };
@@ -364,9 +374,11 @@ function NotePage() {
               </div>
               
               <div className="button-container">
+                
                 <button
                   className="draw-button"
                   onClick={() => toggleExcalidraw(index)}
+                  disabled={input.isLoading}
                 >
                   <span className="button-icon">✏️</span>
                   {input.showExcalidraw ? "Close Drawing Tool" : "Draw"}
@@ -374,18 +386,25 @@ function NotePage() {
                 <button
                   className="generate-button"
                   onClick={() => handleSubmit(index)}
+                  disabled={input.isLoading}
                 >
-                  Generate Response
+                  Generate Summary
                 </button>
                 <button
                   className="save-button"
                   onClick={() => saveSection(index)}
+                  disabled={input.isLoading}
                 >
                   <span className="button-icon">💾</span>
                   Save Section
                 </button>
+                
               </div>
-              
+              {input.isLoading && (
+                  <div className="ai-runner-container">
+                    <div className="ai-runner">🤖</div>
+                  </div>
+                )}
               {/* Embed Excalidraw directly below the content area when toggled */}
               {input.showExcalidraw && (
                 <div className="section-excalidraw-container">

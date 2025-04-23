@@ -938,3 +938,40 @@ textarea:focus {
   margin-bottom: 2px;
   font-weight: bold;
 }
+
+
+.ai-runner-container {
+  width: 100%;
+  height: 40px;
+  margin-top: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.ai-runner {
+  position: absolute;
+  font-size: 24px;
+  animation: runAI 3s linear infinite;
+  top: 0;
+  left: 0;
+}
+
+@keyframes runAI {
+  0% {
+    left: -20px;
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(0deg);
+  }
+  75% {
+    transform: rotate(0deg);
+  }
+  100% {
+    left: 100%;
+    transform: rotate(0deg);
+  }
+}
