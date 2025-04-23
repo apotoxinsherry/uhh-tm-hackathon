@@ -266,3 +266,11 @@
     font-size: 1.2rem;
   }
 }
+
+
+/* Add proper styling for lists inside message bubbles */
+.message-text ol, 
+.message-text ul {
+  padding-left: 1.5rem;  /* Adds padding to the left of lists */
+}
+

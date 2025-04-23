@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import "../styles/Tutor.css";
-
+import ReactMarkdown from 'react-markdown';
 function Tutor() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
@@ -82,8 +82,8 @@ function Tutor() {
     
     try {
       // Send request to backend API
-      const response = await axios.post("http://localhost:8000/tutor/ask", {
-        question: input
+      const response = await axios.post("http://localhost:8000/users/user1/notes/note1/tutor", {
+        query: input
       });
       
       // Process response from backend
@@ -165,7 +165,9 @@ function Tutor() {
                 {message.type === "bot" ? "🤖" : "👤"}
               </div>
               <div className="message-bubble">
-                <div className="message-text">{message.content}</div>
+              <div className="message-text">
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
+              </div>
                 <div className="message-time">{formatTime(message.timestamp)}</div>
               </div>
             </div>
