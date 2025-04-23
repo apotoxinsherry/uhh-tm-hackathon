@@ -213,10 +213,14 @@ async def tutor_route(
     try:
         # LangChain LLM instance
         llm = ChatOpenAI(model_name="gpt-4o-mini")
+
+        with open("backend/prompts/tutor.txt", 'r') as file:
+            content = file.read()
+            print("File content read")
         
         # LangChain message-style prompt
         messages = [
-            SystemMessage(content="You are a tutoring agent designed to help users learn by explaining the material they provide. Your task is to analyze the user's notes, offer clear and concise explanations, and directly answer any queries the user has based on the content of their notes"),
+            SystemMessage(content=content),
             SystemMessage(content=f"The notes taken by the user is as follows: {context}. Similarly, the chat history is as follows: {chat_history}."),
             HumanMessage(content=f"The query is as follows.:\n{query}")
         ]
