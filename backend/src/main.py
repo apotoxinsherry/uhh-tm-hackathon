@@ -256,7 +256,7 @@ async def tutor_route(
         error_details = traceback.format_exc()
         raise HTTPException(status_code=500, detail=f"Error processing query: {str(e)}\n{error_details}")
 
-@app.post("/users/{username}/notes/{filename}/pux")
+@app.post("/users/{username}/notes/{note_name}/pux")
 async def pux_route(
     username: str = Path(...),
     note_name: str = Path(...),
