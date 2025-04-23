@@ -101,6 +101,11 @@ body {
 
 .input-section {
   margin-bottom: 40px;
+  margin-bottom: 30px;
+  padding: 25px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .input-container {
@@ -886,4 +891,50 @@ textarea:focus {
     bottom: -20px;
     font-size: 0.7rem;
   }
+}
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+.section-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #4f46e5;
+}
+
+.delete-section-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: white;
+  border: 2px solid white;
+  box-shadow: 0 4px 6px -1px rgba(220, 38, 38, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
+  position: absolute;
+  top: -15px;
+  right: -15px;
+  z-index: 5;
+}
+
+.delete-section-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 20px -3px rgba(220, 38, 38, 0.5);
+}
+
+.delete-icon {
+  font-size: 20px;
+  line-height: 0;
+  margin-bottom: 2px;
+  font-weight: bold;
 }

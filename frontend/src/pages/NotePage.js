@@ -92,6 +92,25 @@ function NotePage() {
     }
   };
 
+  // Delete a specific section
+  const deleteSection = (index) => {
+    // Don't allow deleting the last section if it's the only one
+    if (inputs.length === 1) {
+      alert("Cannot delete the only section. At least one section is required.");
+      return;
+    }
+
+    // Confirm before deleting
+    if (window.confirm(`Are you sure you want to delete section ${index + 1}? This action cannot be undone.`)) {
+      const newInputs = [...inputs];
+      newInputs.splice(index, 1);
+      setInputs(newInputs);
+      
+      // Update localStorage to reflect the deletion
+      localStorage.setItem(`note-${id}`, JSON.stringify(newInputs));
+    }
+  };
+
   // Handle change in topic, tag, or content fields
   const handleChange = (index, field, value) => {
     const newInputs = [...inputs];
@@ -270,6 +289,17 @@ function NotePage() {
 
       {inputs.map((input, index) => (
         <div key={index} className="input-section">
+          <div className="section-header">
+            <h3 className="section-title">Section {index + 1}</h3>
+            <button 
+              className="delete-section-button" 
+              onClick={() => deleteSection(index)}
+              title="Delete this section"
+            >
+              <span className="delete-icon">×</span>
+            </button>
+          </div>
+          
           <div className="input-container">
             <div className="input-fields">
               <div className="input-row">
