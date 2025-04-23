@@ -350,15 +350,11 @@ function NotePage() {
           </button>
           <button className="nav-button" onClick={() => navigate("/pux")}>
             <span className="button-icon">📊</span>
-            PUX
+            Insight Builder
           </button>
           <button className="nav-button" onClick={() => navigate("/tutor")}>
             <span className="button-icon">📝</span>
-            TUTOR
-          </button>
-          <button className="save-all-button" onClick={saveData}>
-            <span className="button-icon">💾</span>
-            Save All
+            Tutor
           </button>
           <div className="file-upload-container">
             <input
@@ -378,6 +374,11 @@ function NotePage() {
             </button>
             {uploadStatus && <div className="upload-status">{uploadStatus}</div>}
           </div>
+          <button className="save-all-button" onClick={saveData}>
+            <span className="button-icon">💾</span>
+            Save All
+          </button>
+          
         </div>
       </div>
 
@@ -407,10 +408,10 @@ function NotePage() {
                   />
                 </div>
                 <div className="input-field">
-                  <label>Tag</label>
+                  <label>Tags</label>
                   <input
                     type="text"
-                    placeholder="Enter Tag"
+                    placeholder="Enter Tags"
                     value={input.tag}
                     onChange={(e) => handleChange(index, "tag", e.target.value)}
                   />

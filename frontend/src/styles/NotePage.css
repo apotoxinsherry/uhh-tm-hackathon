@@ -45,19 +45,17 @@ body {
   align-items: center;
   gap: 6px;
   padding: 10px 16px;
-  background-color: #fff;
-  border: 1px solid #e2e8f0;
+  background-color: #ad8dc2;
   border-radius: 8px;
-  color: #4a5568;
-  font-size: 14px;
+  color: #f9fafc;
+  font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .nav-button:hover {
-  background-color: #f7fafc;
+  background-color: #ad8dc2;
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
@@ -700,8 +698,8 @@ textarea:focus {
 
 /* Save section button styling */
 .save-button {
-  background-color: #fff;
-  color: #3182ce;
+  background-color: #a1c477;
+  color: #fbfdff;
   border: 1px solid #bee3f8;
   border-radius: 8px;
   padding: 12px 24px;
@@ -726,7 +724,6 @@ textarea:focus {
 .save-all-button {
   background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
   color: white;
-  border: none;
   border-radius: 8px;
   padding: 10px 16px;
   font-size: 14px;
@@ -737,6 +734,8 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 6px;
+  border-color: black;
+  border-width: 2px;
 }
 
 .save-all-button:hover {
@@ -831,21 +830,26 @@ textarea:focus {
 }
 
 .upload-button {
-  background-color: #4a6fa5;
+  background-color: #4aa568;
+  border: 3px solid #0c0c0c;
   color: white;
-  border: none;
-  border-radius: 4px;
+  font-size: 16px;
+  border-radius: 7px;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   cursor: pointer;
+  margin-left: -10px;
   display: flex;
   align-items: center;
+  height:50px;
   gap: 0.5rem;
   transition: all 0.2s ease;
+  border-color: black;
+  border-width: 2px;
 }
 
 .upload-button:hover {
-  background-color: #3a5a84;
+  background-color: #3d685e;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }

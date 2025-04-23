@@ -37,7 +37,7 @@ function Tutor() {
         setMessages([
           {
             type: "bot",
-            content: "Welcome to NoteGuru, your personal learning assistant! I’m here to help you turn your notes into a comprehensive understanding of the concepts you’ve studied. Whether it’s a complex theory, a technical term, or an entire section of your notes, I’ll break it down for you in simple terms. You can ask me questions anytime, and I’ll guide you through the details with explanations, examples, and connections to other related topics. Let’s turn those notes into powerful knowledge and mastery together! Feel free to ask anything, and let’s get started!",
+            content: "Welcome to NoteMentor, your personal learning assistant! I’m here to help you turn your notes into a comprehensive understanding of the concepts you’ve studied. Whether it’s a complex theory, a technical term, or an entire section of your notes, I’ll break it down for you in simple terms. You can ask me questions anytime, and I’ll guide you through the details with explanations, examples, and connections to other related topics. Let’s turn those notes into powerful knowledge and mastery together! Feel free to ask anything, and let’s get started!",
             timestamp: new Date().toISOString()
           }
         ]);
@@ -130,7 +130,7 @@ function Tutor() {
       const welcomeMessage = [
         {
           type: "bot",
-          content: "Welcome to NoteGuru, your personal learning assistant! I’m here to help you turn your notes into a comprehensive understanding of the concepts you’ve studied. Whether it’s a complex theory, a technical term, or an entire section of your notes, I’ll break it down for you in simple terms. You can ask me questions anytime, and I’ll guide you through the details with explanations, examples, and connections to other related topics. Let’s turn those notes into powerful knowledge and mastery together! Feel free to ask anything, and let’s get started!",
+          content: "Welcome to NoteMentor, your personal learning assistant! I’m here to help you turn your notes into a comprehensive understanding of the concepts you’ve studied. Whether it’s a complex theory, a technical term, or an entire section of your notes, I’ll break it down for you in simple terms. You can ask me questions anytime, and I’ll guide you through the details with explanations, examples, and connections to other related topics. Let’s turn those notes into powerful knowledge and mastery together! Feel free to ask anything, and let’s get started!",
           timestamp: new Date().toISOString()
         }
       ];

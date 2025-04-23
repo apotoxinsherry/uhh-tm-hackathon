@@ -82,8 +82,8 @@ function PUX() {
     
     try {
       // Send request to backend API
-      const response = await axios.post("http://localhost:8000/tutor/ask", {
-        question: input
+      const response = await axios.post("http://localhost:8000/users/user2/notes/note1/pux", {
+        query: input
       });
       
       // Process response from backend
