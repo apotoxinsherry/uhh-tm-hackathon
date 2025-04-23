@@ -189,8 +189,6 @@ async def tutor_route(
     upload_dir = BASE_DIR / username / note_name / "uploaded_files"
     chat_dir.mkdir(parents=True, exist_ok=True)
 
-
-    
     
     # Gather content from all markdown files (subsections) in the note folder
     context = ""
@@ -217,7 +215,7 @@ async def tutor_route(
         with open("backend/prompts/tutor.txt", 'r') as file:
             content = file.read()
             print("File content read")
-        
+        print(content)
         # LangChain message-style prompt
         messages = [
             SystemMessage(content=content),

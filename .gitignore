@@ -25,7 +25,6 @@ yarn-error.log*
 
 
 *.md
-users/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
